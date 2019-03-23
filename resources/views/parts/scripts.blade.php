@@ -1,6 +1,14 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   <script src="{{asset('vendor/jquery/jquery.min.js')}}"></script>
+
+   <script src="{{asset('vendor/fullcalendar/lib/jquery.min.js')}}"></script>
+   <script src="{{asset('vendor/fullcalendar/lib/jquery-ui.min.js')}}"></script>
+   <script src="{{asset('vendor/fullcalendar/lib/moment.min.js')}}"></script>
+   <script src="{{asset('vendor/multi-select/js/jquery.multi-select.js')}}"></script>
+
+   <script src="{{asset('vendor/fullcalendar/fullcalendar.min.js')}}"></script>
+
   <script src="{{asset('vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
 
   <!-- Core plugin JavaScript-->
@@ -31,8 +39,65 @@
   
   </script>
 
+  <script type="text/javascript">
 
-<script> 
+  $(function () {
+
+    var evt = [];
+     $.ajax({ 
+          url:"{{URL::route('getEvent')}}",
+          type:"GET",
+          dataType:"JSON",
+          async:false
+    }).done(function(r){
+
+          evt = r;
+    });
+  
+        
+
+      $("#calendar").fullCalendar({
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'month,agendaWeek,agendaDay,listWeek'
+      },
+
+      minTime: "06:00:00",
+      maxTime: "20:00:00",
+      events: evt,
+      textColor: 'white',
+
+      dayClick: function(date, jsEvent, view, resourceObj) {
+
+
+               var r = confirm('Do you want to plot on this date ' + date.format());
+
+                if(r== true){
+
+                   var base = '{{ URL::to('/create_event') }}';
+
+                  window.location.href=base;
+                }
+        
+        },
+
+      
+       eventClick: function(calEvent, jsEvent, view) {
+
+          var er = confirm('Do you want to plot on this date ');
+       }
+
+    });
+
+
+
+
+      })
+
+</script>
+  
+  <script> 
   
   $('#editModal').on('show.bs.modal', function (event) {
 
@@ -76,70 +141,78 @@
     modal.find('.modal-body #role').val(role);
   })
 
-  $(function() {
-  $('input[id="case"]').on('click', function(){
-    if ($(this).val() == 'With Court Case') {
-      $('#textboxes').show();
-    }
-    else {
-      $('#textboxes').hide();
-    }
-  });
-});
+  $('#deletePatient').on('show.bs.modal', function (event) {
+
+    var button = $(event.relatedTarget)
+
+    var patientid = button.data('patientid')
+    var modal = $(this)
+
+    modal.find('.modal-body #patientid').val(patientid);
+  })
+
+  $('#transferPatient').on('show.bs.modal', function (event) {
+
+    var button = $(event.relatedTarget);
+
+    var patientid = button.data('patientid');
+    var patientdep = button.data('patientdep');
+    var modal = $(this);
+
+    modal.find('.modal-body #patientid').val(patientid);
+    modal.find('.modal-body #patientdep').val(patientdep);
+  })
+
+  $('#transferReferral').on('show.bs.modal', function (event) {
+
+    var button = $(event.relatedTarget);
+    var button1 = $("#transferPatient #patientid").val().trim();
+  
+    var depid = button.data('depid');
+    var patientid = $('#transferPatient #patientid').val().trim();
+    var patientdep = $('#transferPatient #patientdep').val().trim();
+    var modal = $(this);
+
+    modal.find('.modal-body #depid').val(depid);
+    modal.find('.modal-body #patientid').val(patientid);
+    modal.find('.modal-body #patientdep').val(patientdep);
+  })
 
   $(function() {
-  $('input[id="new case"]').on('click', function(){
+  $('input[name="casetype"]').on('click', function(){
+
     if ($(this).val() == 'New Case') {
+      document.getElementById("casetype").disabled = true;
       $('#textboxes').hide();
     }
-    else {
-      $('#textboxes').show();
-    }
-  });
-});
-
-  $(function() {
-  $('input[id="old case"]').on('click', function(){
-    if ($(this).val() == 'Old Case') {
+    else if ($(this).val() == 'Old Case'){
+      document.getElementById("casetype").disabled = true;
       $('#textboxes').hide();
     }
-    else {
+    else if($(this).val() == 'With Court Case'){
+      document.getElementById("casetype").disabled = false;
       $('#textboxes').show();
-    }
+     }
+    });
   });
-});
+
 
   $(function() {
-  $('input[id="Voluntary Submission"]').on('click', function(){
+  $('input[name="type"]').on('click', function(){
+
     if ($(this).val() == 'Voluntary Submission') {
+      document.getElementById("type").disabled = true;
       $('#textbox').hide();
     }
-    else {
-      $('#textbox').show();
-    }
-  });
-});
-
-  $(function() {
-  $('input[id="Compulsory Submission"]').on('click', function(){
-    if ($(this).val() == 'Compulsory Submission') {
+    else if ($(this).val() == 'Compulsory Submission'){
+      document.getElementById("type").disabled = true;
       $('#textbox').hide();
     }
-    else {
+    else if($(this).val() == 'Others'){
+      document.getElementById("type").disabled = false;
       $('#textbox').show();
-    }
+     }
+    });
   });
-});
-
-  $(function() {
-  $('input[id="others"]').on('click', function(){
-    if ($(this).val() == 'Others') {
-      $('#textbox').show();
-    }
-    else {
-      $('#textbox').hide();
-    }
-  });
-});
   
 </script>

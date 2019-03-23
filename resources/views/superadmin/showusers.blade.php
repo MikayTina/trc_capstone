@@ -1,6 +1,14 @@
 @extends('main')
 @section('content')
- 
+ <style>
+   
+  th {
+  text-align: inherit;
+  background-color: #212529;
+  color:white;
+}
+
+ </style>
         <!-- Breadcrumbs-->
         <ol class="breadcrumb">
           <li class="breadcrumb-item">
@@ -30,6 +38,7 @@
                     <th>Name</th>
                     <th>Contact</th>
                     <th>Email</th>
+                    <th>Department</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -39,6 +48,11 @@
                     <td>{{$uroles->fname}} {{$uroles->lname}}</td>
                     <td>{{$uroles->contact}}</td>
                     <td>{{$uroles->email}}</td>
+                    @if($uroles->department == '')
+                    <td>--{{$uroles->user_roles->name}}--</td>
+                    @else
+                    <td>{{$uroles->user_departments->department_name}} Department</td>
+                    @endif
                     <td style="text-align: center"><button class="btn btn-success" style="margin-right: 10px">View</button><button class="btn btn-primary" style="margin-right: 10px" data-toggle="modal" data-target="#editModal" data-userid="{{$uroles->id}}" data-fname="{{$uroles->fname}}" data-lname="{{$uroles->lname}}" data-uname="{{$uroles->username}}" data-email="{{$uroles->email}}" data-contact="{{$uroles->contact}}" data-department="{{$uroles->department}}" data-userid="{{$uroles->id}}">Edit</button><button class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-userid="{{$uroles->id}}">Delete</button></td>
                   </tr>
                 @endforeach
